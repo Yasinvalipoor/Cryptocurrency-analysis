@@ -43,7 +43,7 @@ do
 
 
 
-        if (Information_Price.Count > 1)
+        if (Information_Price.Count > 100)
         {
 
             count++;
