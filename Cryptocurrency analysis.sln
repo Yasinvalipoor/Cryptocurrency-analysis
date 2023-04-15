@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33417.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cryptocurrency analysis", "Cryptocurrency analysis.csproj", "{E33DC74F-5539-4D18-943A-6469A2F8462C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E33DC74F-5539-4D18-943A-6469A2F8462C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E33DC74F-5539-4D18-943A-6469A2F8462C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E33DC74F-5539-4D18-943A-6469A2F8462C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E33DC74F-5539-4D18-943A-6469A2F8462C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {80A83A81-204C-454D-ABEC-C1A0ABA87684}
+	EndGlobalSection
+EndGlobal
