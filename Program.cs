@@ -1,16 +1,14 @@
-﻿using Cryptocurrency_analysis.CreatFile;
+using Cryptocurrency_analysis.CreatFile;
 using Cryptocurrency_analysis.DataCollector;
 using Cryptocurrency_analysis.Predictor;
-using Cryptocurrency_analysis.Smart_predictor;
-using ConsoleTables;
 using Cryptocurrency_analysis.ReadAPI;
+using Cryptocurrency_analysis.Smart_predictor;
 
 List<double> Information_Price = new List<double>();
 Prediction prediction = new Prediction();
 SmartPrediction smartPrediction = new SmartPrediction();
 DataCollector Collector = new DataCollector();
 CreatFile creat = new CreatFile();
-
 
 int count = 0;
 
@@ -20,7 +18,7 @@ Console.WriteLine("\n\n                                                       * 
 Console.ResetColor();
 
 Console.ForegroundColor = ConsoleColor.Red;
-Console.WriteLine("\n \"Warning: due to the volatility of the Bitcoin exchange rate, this program cannot make a completely accurate prediction\"\n");
+Console.WriteLine("\n \"Warning: due to the volatility of the Bitcoin exchange rate, this program cannot make a completely accurate prediction\"");
 Console.WriteLine("\n \"Please make the page full screen\"\n\n  [Attention : Please wait a little bit (about one minute) because this program needs to get 100 data first and then predict ]\n");
 Console.WriteLine("  ==> [ Important Attention : All the prices that are taken from the API are saved in a \"json file\" in the \"MyFolder_SavePrices folder\" on the (( \"desktop\" )) (: ] <== \n\n");
 Console.ResetColor();
@@ -28,7 +26,8 @@ Console.ResetColor();
 
 do
 {
-
+    try
+    {
         ReadAPI.InitializeClient();
         var Info = await ReadAPI.Read_Url("https://api.kucoin.com/api/v1/market/stats?symbol=BTC-USDT");
 
@@ -41,9 +40,7 @@ do
 
 
 
-
-
-        if (Information_Price.Count > 100)
+        if (Information_Price.Count > 50)
         {
 
             count++;
@@ -75,66 +72,62 @@ do
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             var RandomPrediction1 = prediction.RandomPrediction1(Information_Price);
             Console.WriteLine("(1) This is First Prediction (Random) : {0}", RandomPrediction1); // پیش بینی1 قیمت بعدی
+
             Console.ResetColor();
             /////
 
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine("____________________________________________\n");
             Console.ResetColor();
+
 
 
             /////
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            var AveragePrediction2 = prediction.AveragePrediction2(Information_Price);
-            Console.WriteLine("(2) This is Second Prediction (Average) : {0}", AveragePrediction2); // پیش بینی2 قیمت بعدی
+            var AvaragePrediction3 = smartPrediction.AvaragePrediction3(Information_Price, Information_Price[Information_Price.Count - 2], Information_Price[Information_Price.Count - 1]);
+
+            var RandomPrediction2 = prediction.Random_Range(RandomPrediction1, AvaragePrediction3);
+            Console.WriteLine($"(2) Prediction1 :{RandomPrediction1} _ Rng_Avarage :{AvaragePrediction3} _  Second Prediction (Random Range) => {RandomPrediction2}"); // پیش بینی2 قیمت بعدی
             Console.ResetColor();
             /////
+
 
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine("____________________________________________\n");
             Console.ResetColor();
 
-
-            /////
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            var RandomPrediction3 = prediction.RandomPrediction3(RandomPrediction1, AveragePrediction2);
-            Console.WriteLine($"(3) Prediction1 :{RandomPrediction1} _ Prediction2 :{AveragePrediction2} _ Third Prediction => {RandomPrediction3}"); // پیش بینی3 قیمت بعدی
-            Console.ResetColor();
-            ///// 
-
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine("____________________________________________\n");
-            Console.ResetColor();
 
 
             /////
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("(4) This is Liner_Regression (Regression) : {0}", smartPrediction.LinearRegressionPrediction());// پیش بینی4 قیمت بعدی
+            Console.WriteLine("(3) This is Prediction RnG : {0}", AvaragePrediction3); // پیش بینی 3 قیمت بعدی
             Console.ResetColor();
             /////
 
+
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine("____________________________________________\n");
             Console.ResetColor();
 
-            //////
+
+
+            /////
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("(5) This is Smart Avarage : {0} ", smartPrediction.SmartAvarage(AveragePrediction2, smartPrediction.LinearRegressionPrediction(), RandomPrediction3));// پیش بینی5 قیمت بعدی
+            var regPrediction4 = smartPrediction.LinearRegressionPrediction(Information_Price);
+            Console.WriteLine("(4) This is Liner_Regression (Regression) : {0}", regPrediction4);// پیش بینی4 قیمت بعدی
             Console.ResetColor();
-            //////
+            /////
 
 
-            //////
+
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine("____________________________________________\n");
             Console.ResetColor();
-            //////   
 
 
             //////
-            var smart_avarage = smartPrediction.SmartAvarage(AveragePrediction2, smartPrediction.LinearRegressionPrediction(), RandomPrediction3);
-            prediction.ValidatePrediction(Info.buy,/**/ RandomPrediction1,/**/ AveragePrediction2,/**/prediction.RandomPrediction3(RandomPrediction1, AveragePrediction2)/**/, smartPrediction.LinearRegressionPrediction()/**/, smart_avarage);// متد اعنبار صنجی پیش بینی ها + درصد اختلاف رشد یا سقوط ارز
-                                                                                                                                                                                                                                                //////  
+            prediction.ValidatePredictions(Info.buy,/**/ RandomPrediction1,/**/RandomPrediction2/**/, AvaragePrediction3/**/, regPrediction4/**/);// متد اعنبار صنجی پیش بینی ها + درصد اختلاف رشد یا سقوط ارز
+                                                                                                                                                  //////  
 
 
 
@@ -147,7 +140,17 @@ do
 
         creat.Creat_File_All_Price(Information_Price);// متد اضافه کردن نرخ ارز در فایل json + ذخیره پوشه در دستکتاپ
 
+    }
+    catch (Exception ex)
+    { 
 
-} while (true);
+
+        Console.WriteLine(ex.Message);
+        Thread.Sleep(5000); // تاخیر 5 ثانیه برای دوباره امتحان کردن اتصال به اینترنت
+    }
+
+} while (true) ;
+
+
 
 
