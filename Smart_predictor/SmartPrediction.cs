@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace Cryptocurrency_analysis.Smart_predictor
 {
@@ -10,39 +6,45 @@ namespace Cryptocurrency_analysis.Smart_predictor
     {
         //متد پیش بینی 4
         //پیش بینی با استفاده از رگرسیون خطی
+
         private List<DataModel.DataModel> data = new List<DataModel.DataModel>();
         public void Add_New_Data(List<DataModel.DataModel> NewData)
         {
             data.AddRange(NewData);
 
         }
-        public float LinearRegressionPrediction()
+        public float LinearRegressionPrediction(List<double> Price)
         {
             float sumX = 0, sumY = 0, sumXX = 0, sumXY = 0;
             int n = data.Count;
+            
             foreach (DataModel.DataModel d in data)
             {
-                sumX += DateTime.Now.Ticks / TimeSpan.TicksPerSecond;
+                sumX += DateTime.Now.Second;
                 sumY += d.buy;
-                sumXX += (float)Math.Pow(DateTime.Now.Ticks / TimeSpan.TicksPerSecond, 2);
-                sumXY += (float)DateTime.Now.Ticks / TimeSpan.TicksPerSecond * d.buy;
+                sumXX += (float)Math.Pow(sumX, 2);
+                sumXY += (float)DateTime.Now.Second * d.buy;
             }
-            var time = DateTime.Now.Ticks;
-            float slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+
+            float alpha = 0.1f; // پارامتر رگولاریزیشن
+            float slope = (n * sumXY - sumX * sumY + alpha * Math.Sign(sumX)) / (n * sumXX - sumX * sumX);
             float intercept = (sumY - slope * sumX) / n;
-            var OutPut = slope * (data[data.Count - 1].makerCoefficient * time / TimeSpan.TicksPerSecond + 1) + intercept;
+            var each_time = DateTime.Now.Second;
+            var OutPut = slope * (data[data.Count - 1].makerCoefficient * each_time / each_time + 1) + intercept;
             return OutPut;
+            
         }
 
-        //متد پیش بینی5  
-        public double SmartAvarage(double avarage1, double regresion, double random2)
+        //متد پیش بینی3 جدید    
+        public double AvaragePrediction3(List<double> information, double minValue, double maxValue)
         {
-            List<double> FinalOutput = new List<double>();
-            FinalOutput.Add(avarage1);
-            FinalOutput.Add(regresion);
-            FinalOutput.Add(Convert.ToDouble(random2));
-            return FinalOutput.Average();
-
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                byte[] buffer = new byte[sizeof(double)];
+                rng.GetBytes(buffer);
+                double randomValue = (BitConverter.ToDouble(buffer, 0) - 0.5) * (maxValue - minValue) + (information[information.Count - 3] + information.Average()) / 2;
+                return Math.Max(minValue, Math.Min(maxValue, randomValue));
+            }
         }
     }
 }
