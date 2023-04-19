@@ -113,7 +113,7 @@ do
 
             /////
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            var regPrediction4 = smartPrediction.LinearRegressionPrediction(Information_Price);
+            var regPrediction4 = smartPrediction.LinearRegressionPrediction();
             Console.WriteLine("(4) This is Liner_Regression (Regression) : {0}", regPrediction4);// پیش بینی4 قیمت بعدی
             Console.ResetColor();
             /////
