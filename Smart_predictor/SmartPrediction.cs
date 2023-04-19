@@ -13,7 +13,7 @@ namespace Cryptocurrency_analysis.Smart_predictor
             data.AddRange(NewData);
 
         }
-        public float LinearRegressionPrediction(List<double> Price)
+        public float LinearRegressionPrediction()
         {
             float sumX = 0, sumY = 0, sumXX = 0, sumXY = 0;
             int n = data.Count;
